@@ -1,5 +1,5 @@
+#include "pcs_wasm.h"
 #include <emscripten/emscripten.h>
-#include <pcstream/pcstream.h>
 #include <stdlib.h>
 
 EMSCRIPTEN_KEEPALIVE
@@ -96,11 +96,41 @@ uint32_t wasm_pcs_hull_visibility_compute(float      *esMVP,
   return 1;
 }
 
-// EMSCRIPTEN_KEEPALIVE
-// uint32_t wasm_pcs_dp_based_lod_select()
-//{
-//
-// }
+EMSCRIPTEN_KEEPALIVE
+uint32_t wasm_pcs_dp_based_lod_select(uint32_t seq_count,
+                                      uint8_t  rep_count,
+                                      void    *metadata_buff,
+                                      uint32_t metadata_size,
+                                      void    *attrib,
+                                      pcs_bw_t bandwidth,
+                                      pcs_lod_version_t *seq_vers)
+{
+  if (seq_vers == NULL)
+  {
+    return 0;
+  }
+  pcs_lod_selector_t vssl        = {0};
+  pcs_lod_version_t  selects_ptr = PCSTREAM_NULL;
+  pcs_lod_selector_init(&vssl, PCSTREAM_LOD_SELECTOR_DP_BASED);
+
+  vssl.post(&vssl,
+            (pcs_count_t)seq_count,
+            (pcs_lod_version_t)rep_count,
+            metadata_buff,
+            (size_t)metadata_size,
+            attrib,
+            bandwidth);
+
+  vssl.get(&vssl, &selects_ptr);
+
+  for (pcs_count_t i = 0; i < seq_count; i++)
+  {
+    seq_vers[i] = selects_ptr[i];
+  }
+
+  pcs_lod_selector_destroy(&vssl);
+  return 1;
+}
 
 EMSCRIPTEN_KEEPALIVE
 pcs_point_cloud_t *wasm_pcs_filrg_pcc_buffer_to_gof(const char *data,
