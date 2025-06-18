@@ -481,7 +481,36 @@ pcs_ret_t pcs_hybrid_solution(void)
   return PCSTREAM_RET_FAIL;
 }
 
-pcs_ret_t pcs_equal_solution(void)
+pcs_ret_t pcs_equal_solution(pcs_count_t        n_mod,
+                             pcs_count_t        n_ver,
+                             pcs_bw_t          *bitrates,
+                             pcs_bw_t           bandwidth,
+                             pcs_lod_version_t *selection)
 {
-  return PCSTREAM_RET_FAIL;
+  if (bitrates == PCSTREAM_NULL || selection == PCSTREAM_NULL ||
+      n_mod == 0 || n_ver == 0)
+  {
+    return PCSTREAM_RET_FAIL;
+  }
+
+  pcs_bw_t    share     = 0;
+  pcs_bw_t    max       = 0;
+  pcs_count_t max_index = 0;
+
+  share                 = bandwidth / n_mod;
+
+  for (pcs_count_t i = 0; i < n_mod; i++)
+  {
+    for (pcs_count_t j = 0; j < n_ver; j++)
+    {
+      if (bitrates[i * n_ver + j] > max &&
+          bitrates[i * n_ver + j] <= share)
+      {
+        max       = bitrates[i * n_ver + j];
+        max_index = j;
+      }
+    }
+    selection[i] = max_index;
+  }
+  return PCSTREAM_RET_SUCCESS;
 }

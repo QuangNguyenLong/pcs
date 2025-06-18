@@ -129,7 +129,21 @@ pcs_ret_t pcs_lod_selector_post_equal(pcs_lod_selector_t *self,
                                       void    *attrib,
                                       pcs_bw_t bandwidth)
 {
-  return PCSTREAM_RET_FAIL;
+  pcs_ret_t ret = 0;
+
+  self->n_ver   = n_ver;
+  self->n_mod   = n_mod;
+
+  self->v = (pcs_lod_version_t *)malloc(sizeof(pcs_lod_version_t) *
+                                        self->n_mod);
+
+  ret     = pcs_equal_solution(self->n_mod,
+                           self->n_ver,
+                           (pcs_bw_t *)attrib,
+                           bandwidth,
+                           self->v);
+
+  return ret;
 }
 pcs_ret_t pcs_lod_selector_post_hybrid(pcs_lod_selector_t *self,
                                        pcs_count_t         n_mod,
@@ -151,7 +165,12 @@ pcs_ret_t
 pcs_lod_selector_get_equal(pcs_lod_selector_t *self,
                            pcs_lod_version_t **selections_ptr)
 {
-  return PCSTREAM_RET_FAIL;
+  if (self->v == PCSTREAM_NULL)
+  {
+    return PCSTREAM_RET_FAIL;
+  }
+  *selections_ptr = self->v;
+  return PCSTREAM_RET_SUCCESS;
 }
 pcs_ret_t
 pcs_lod_selector_get_hybrid(pcs_lod_selector_t *self,

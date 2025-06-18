@@ -97,12 +97,46 @@ uint32_t wasm_pcs_hull_visibility_compute(float      *esMVP,
 }
 
 EMSCRIPTEN_KEEPALIVE
+uint32_t wasm_pcs_equal_lod_select(uint32_t           seq_count,
+                                   uint32_t           rep_count,
+                                   void              *attrib,
+                                   uint32_t           bandwidth,
+                                   pcs_lod_version_t *seq_vers)
+{
+  if (seq_vers == NULL)
+  {
+    return 0;
+  }
+  pcs_lod_selector_t vssl        = {0};
+  pcs_lod_version_t *selects_ptr = PCSTREAM_NULL;
+  pcs_lod_selector_init(&vssl, PCSTREAM_LOD_SELECTOR_EQUAL);
+
+  vssl.post(&vssl,
+            (pcs_count_t)seq_count,
+            (pcs_lod_version_t)rep_count,
+            NULL,
+            (size_t)0,
+            attrib,
+            (pcs_bw_t)bandwidth);
+
+  vssl.get(&vssl, &selects_ptr);
+
+  for (pcs_count_t i = 0; i < seq_count; i++)
+  {
+    seq_vers[i] = selects_ptr[i];
+  }
+
+  pcs_lod_selector_destroy(&vssl);
+  return 1;
+}
+
+EMSCRIPTEN_KEEPALIVE
 uint32_t wasm_pcs_dp_based_lod_select(uint32_t seq_count,
-                                      uint8_t  rep_count,
+                                      uint32_t rep_count,
                                       void    *metadata_buff,
                                       uint32_t metadata_size,
                                       void    *attrib,
-                                      pcs_bw_t bandwidth,
+                                      uint32_t bandwidth,
                                       pcs_lod_version_t *seq_vers)
 {
   if (seq_vers == NULL)
@@ -110,7 +144,7 @@ uint32_t wasm_pcs_dp_based_lod_select(uint32_t seq_count,
     return 0;
   }
   pcs_lod_selector_t vssl        = {0};
-  pcs_lod_version_t  selects_ptr = PCSTREAM_NULL;
+  pcs_lod_version_t *selects_ptr = PCSTREAM_NULL;
   pcs_lod_selector_init(&vssl, PCSTREAM_LOD_SELECTOR_DP_BASED);
 
   vssl.post(&vssl,
@@ -119,7 +153,7 @@ uint32_t wasm_pcs_dp_based_lod_select(uint32_t seq_count,
             metadata_buff,
             (size_t)metadata_size,
             attrib,
-            bandwidth);
+            (pcs_bw_t)bandwidth);
 
   vssl.get(&vssl, &selects_ptr);
 
@@ -194,4 +228,10 @@ void *wasm_malloc(uint32_t size)
     return malloc((size_t)size);
   }
   return NULL;
+}
+
+EMSCRIPTEN_KEEPALIVE
+int add(int a, int b)
+{
+  return a + b;
 }

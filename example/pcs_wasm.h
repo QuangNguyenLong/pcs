@@ -32,12 +32,18 @@ uint32_t wasm_pcs_hull_visibility_compute(float      *esMVP,
                                           uint32_t    hull_size,
                                           float      *screen_area);
 
+uint32_t wasm_pcs_equal_lod_select(uint32_t           seq_count,
+                                   uint32_t           rep_count,
+                                   void              *attrib,
+                                   uint32_t           bandwidth,
+                                   pcs_lod_version_t *seq_vers);
+
 uint32_t wasm_pcs_dp_based_lod_select(uint32_t seq_count,
-                                      uint8_t  rep_count,
+                                      uint32_t rep_count,
                                       void    *metadata_buff,
                                       uint32_t metadata_size,
                                       void    *attrib,
-                                      pcs_bw_t bandwidth,
+                                      uint32_t bandwidth,
                                       pcs_lod_version_t *seq_vers);
 
 pcs_point_cloud_t *wasm_pcs_filrg_pcc_buffer_to_gof(const char *data,
@@ -57,5 +63,7 @@ uint32_t wasm_pcs_frame_get_size(pcs_point_cloud_t *frame);
 void     wasm_free(void *ptr);
 
 void    *wasm_malloc(uint32_t size);
+
+int      add(int a, int b);
 
 #endif
