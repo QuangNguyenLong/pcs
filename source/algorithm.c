@@ -493,42 +493,39 @@ pcs_ret_t pcs_equal_solution(pcs_count_t        n_mod,
     return PCSTREAM_RET_FAIL;
   }
 
-  pcs_bw_t    share     = 0;
-  pcs_bw_t    max       = 0;
-  pcs_count_t max_index = 0;
-  pcs_bw_t    min       = 0;
-  pcs_count_t min_index = 0;
-
-  share                 = bandwidth / n_mod;
+  pcs_bw_t share = bandwidth / n_mod;
 
   for (pcs_count_t i = 0; i < n_mod; i++)
   {
-    max_index = 0;
-    max       = 0;
-    min_index = 0;
-    min       = 0;
+    pcs_bw_t    max       = 0;
+    pcs_count_t max_index = 0;
+    pcs_bw_t    min       = INT64_MAX; // or PCS_BW_MAX
+    pcs_count_t min_index = 0;
+
     for (pcs_count_t j = 0; j < n_ver; j++)
     {
-      if (bitrates[i * n_ver + j] > max &&
-          bitrates[i * n_ver + j] <= share)
+      pcs_bw_t b = bitrates[i * n_ver + j];
+      if (b <= share && b > max)
       {
-        max       = bitrates[i * n_ver + j];
+        max       = b;
         max_index = j;
       }
-      if (bitrates[i * n_ver + j] < min)
+      if (b < min)
       {
-        min       = bitrates[i * n_ver + j];
-        min_index = 0;
+        min       = b;
+        min_index = j;
       }
     }
-    if (max == 0)
-    {
-      selection[i] = min_index;
-    }
-    else
+
+    if (max > 0)
     {
       selection[i] = max_index;
     }
+    else
+    {
+      selection[i] = min_index; // fallback to lowest bitrate
+    }
   }
+
   return PCSTREAM_RET_SUCCESS;
 }
