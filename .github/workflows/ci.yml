@@ -197,8 +197,8 @@ jobs:
         && cmake --build build.em -j 2
 
     - name: Add wasm
-      run: cp build/wasm/example/*.js build/docs/html/
-        && cp build/wasm/example/*.wasm build/docs/html/
+      run: cp build.em/example/*.js build/docs/html/
+        && cp build.em/example/*.wasm build/docs/html/
 
     - name: Deploy docs
       uses: peaceiris/actions-gh-pages@v4
