@@ -496,11 +496,17 @@ pcs_ret_t pcs_equal_solution(pcs_count_t        n_mod,
   pcs_bw_t    share     = 0;
   pcs_bw_t    max       = 0;
   pcs_count_t max_index = 0;
+  pcs_bw_t    min       = 0;
+  pcs_count_t min_index = 0;
 
   share                 = bandwidth / n_mod;
 
   for (pcs_count_t i = 0; i < n_mod; i++)
   {
+    max_index = 0;
+    max       = 0;
+    min_index = 0;
+    min       = 0;
     for (pcs_count_t j = 0; j < n_ver; j++)
     {
       if (bitrates[i * n_ver + j] > max &&
@@ -509,8 +515,20 @@ pcs_ret_t pcs_equal_solution(pcs_count_t        n_mod,
         max       = bitrates[i * n_ver + j];
         max_index = j;
       }
+      if (bitrates[i * n_ver + j] < min)
+      {
+        min       = bitrates[i * n_ver + j];
+        min_index = 0;
+      }
     }
-    selection[i] = max_index;
+    if (max == 0)
+    {
+      selection[i] = min_index;
+    }
+    else
+    {
+      selection[i] = max_index;
+    }
   }
   return PCSTREAM_RET_SUCCESS;
 }
