@@ -140,6 +140,8 @@ int main(int argc, char **argv)
               (void *)screen_area,
               dl_es);
 
+    vssl.get(&vssl, &selects);
+
     hand.post_segment(&hand, selects);
     hand.get_segment(&hand, &curr_content_ptr);
   }

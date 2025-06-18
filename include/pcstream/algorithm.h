@@ -30,6 +30,11 @@ PCSTREAM_EXPORT pcs_ret_t
                                                 pcs_lod_version_t *selection);
 PCSTREAM_EXPORT pcs_ret_t pcs_lm_based_solution(void);
 PCSTREAM_EXPORT pcs_ret_t pcs_hybrid_solution(void);
-PCSTREAM_EXPORT pcs_ret_t pcs_equal_solution(void);
+PCSTREAM_EXPORT pcs_ret_t
+pcs_equal_solution(pcs_count_t        n_mod,
+                   pcs_count_t        n_ver,
+                   pcs_bw_t          *bitrates,
+                   pcs_bw_t           bandwidth,
+                   pcs_lod_version_t *selection);
 
 #endif

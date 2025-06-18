@@ -97,6 +97,25 @@ jobs:
           halt_on_error=1"
       run: ctest --output-on-failure --no-tests=error -j 2
 
+  wasm:
+    needs: [lint]
+
+    runs-on: ubuntu-22.04
+
+    env: { CC: clang-15 }
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: sudo apt-get install emscripten -y
+
+    - name: Configure
+      run: emcmake cmake -S . -B build/wasm -D BUILD_EXAMPLES=TRUE
+
+    - name: Build
+      run: cmake --build build/wasm -j 2
+
   test:
     needs: [lint]
 
