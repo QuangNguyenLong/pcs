@@ -74,8 +74,8 @@ int main(int argc, char **argv)
                                              bw,
                                              selection));
 
-  PCSTREAM_CHECK_FATAL(pcs_dp_based_solution(
-      n_mod, n_ver, NULL, 0, &bitrates[0][0], bw, selection));
+  PCSTREAM_CHECK_FATAL(pcs_equal_solution(
+      n_mod, n_ver, &bitrates[0][0], bw, selection));
 
   free(metadata);
   return 0;
