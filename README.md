@@ -1,4 +1,4 @@
-# pcstream
+# pcstream ![CI](../../actions/workflows/ci.yml/badge.svg)
 
 This is the pcstream project.
 
